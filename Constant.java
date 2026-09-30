@@ -1,4 +1,5 @@
-public class Constant extends Expression{
+public class Constant extends Expression {
+
 	public final double value;
 
 	public Constant(double value){
@@ -16,7 +17,11 @@ public class Constant extends Expression{
 	}
 
 	@Override
+	public String toString(String contents){
+		return Double.toString(value);
+	}
+	@Override
 	public String toString(){
-		return ""+value;
+		return Double.toString(value);
 	}
 }

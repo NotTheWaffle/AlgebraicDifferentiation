@@ -10,7 +10,7 @@ public class Product extends Expression {
 
 	@Override
 	public double evaluate(double x){
-		return operandA.evaluate(x) + operandB.evaluate(x);
+		return operandA.evaluate(x) * operandB.evaluate(x);
 	}
 
 	@Override
@@ -22,29 +22,28 @@ public class Product extends Expression {
 	public Expression simplified(){
 		Expression opA = operandA.simplified();
 		Expression opB = operandB.simplified();
+
 		if (opA == opB){
-			return new PowerFunction(2).of(opA);
+			return new Power(2).of(opA);
 		}
+
 		Double a = null;
 		Double b = null;
-		if (opA instanceof Constant constA){
-			a = constA.value;
-		}
-		if (opB instanceof Constant constB){
-			b = constB.value;
-		}
+
+		if (opA instanceof Constant constA) a = constA.value;
+		if (opB instanceof Constant constB) b = constB.value;
+
 		if (a != null && b != null) return new Constant(a * b);
 		if (a != null && a == 0) return new Constant(0);
 		if (b != null && b == 0) return new Constant(0);
 		if (a != null && a == 1) return opB;
 		if (b != null && b == 1) return opA;
-		if (a != null) return new Coefficient(a, opB);
-		if (b != null) return new Coefficient(b, opA);
+
 		return new Product(opA, opB);
 	}
 
 	@Override
-	public String toString(){
-		return "("+operandA+" * "+operandB+")";
+	public String toString(String contents){
+		return "("+operandA.toString(contents)+" * "+operandB.toString(contents)+")";
 	}
 }

@@ -1,15 +1,16 @@
-public class Application extends Expression{
-	public final Function function;
+public class Application extends Expression {
+
+	public final Expression function;
 	public final Expression argument;
 
-	public Application(Function function, Expression argument){
+	public Application(Expression function, Expression argument){
 		this.function = function;
 		this.argument = argument;
 	}
 
 	@Override
 	public double evaluate(double x){
-		return function.of(argument.evaluate(x));
+		return function.evaluate(argument.evaluate(x));
 	}
 
 	@Override
@@ -20,17 +21,23 @@ public class Application extends Expression{
 	@Override
 	public Expression simplified(){
 		Expression argument = this.argument.simplified();
+		Expression function = this.function.simplified();
+
+		// if it is the unit
 		if (function == Function.identity) return argument;
-		if (function == Function.unit) return new Constant(1);
-		if (function instanceof ConstantFunction constant) return new Constant(constant.value);
-		// if we know the inside, we know the outside
-		if (argument instanceof Constant constant) return new Constant(function.of(constant.value));
+		// or if it is a 0er
+		if (function instanceof Constant constant) return new Constant(constant.value);
+
+		// unit
+		if (argument == Function.identity) return function;
+		// nullifier
+		if (argument instanceof Constant constant) return new Constant(function.evaluate(constant.value));
 
 		return new Application(function, argument);
 	}
 
 	@Override
-	public String toString(){
-		return function.toString(argument.toString());
+	public String toString(String contents){
+		return function.toString(argument.toString(contents));
 	}
 }
